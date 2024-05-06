@@ -64,4 +64,7 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'some.other.dependency:version'
+    compile 'org.tensorflow:tensorflow-lite:+'
+}

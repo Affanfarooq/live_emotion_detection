@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _initializeCamera();
+    loadModel();
   }
 
   Future<void> _initializeCamera() async {
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> runModel(CameraImage image) async {
     // Convert the image to bytes
-    List<dynamic> results = await Tflite.runModelOnFrame(
+    var results = await Tflite.runModelOnFrame(
       bytesList: image.planes.map((plane) {
         return plane.bytes;
       }).toList(),
@@ -60,6 +61,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  loadModel()async{
+    await Tflite.loadModel(model: "images/model.txt",labels: "images/labels.txt");
+
+  }
+
   @override
   void dispose() {
     _cameraController!.dispose();
@@ -72,16 +78,19 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Live Emotion Detection'),
       ),
-      body: _isCameraInitialized
-          ? CameraPreview(_cameraController!)
-          : Center(child: CircularProgressIndicator()),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Capture image if needed
-        },
-        child: Icon(Icons.camera_alt),
+      body: Column(
+        children: [
+          Column(
+            children: [
+              _isCameraInitialized
+                  ? CameraPreview(_cameraController!)
+                  : Center(child: CircularProgressIndicator()),
+              Text(_output)
+
+            ],
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
